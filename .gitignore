@@ -1,0 +1,10 @@
+/backend/app/models/__pycache__
+/backend/app/__pycache__
+/backend/venv
+frontend/vite.config.js
+backend/app/database.py
+backend/app/schemas.py
+/backend/app/routers/__pycache__
+/backend/static
+cloudflared.exe
+backend/.env
