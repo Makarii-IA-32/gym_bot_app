@@ -1,10 +1,31 @@
 <script setup>
+/**
+ * @file Компонент нижньої панелі навігації (BottomNav.vue).
+ * @component BottomNav
+ * @description Забезпечує фіксовано меню перемикання між основними розділами застосунку.
+ */
+
 import { useRouter, useRoute } from 'vue-router'
 
+/**
+ * Об'єкт маршрутизатора для виконання програмних переходів між сторінками.
+ * @type {import('vue-router').Router}
+ */
 const router = useRouter()
+
+/**
+ * Об'єкт поточного стану активного маршруту для відстеження URL.
+ * @type {import('vue-router').RouteLocationNormalizedLoaded}
+ */
 const route = useRoute()
 
-// Перевірка активності маршруту
+/**
+ * Перевіряє, чи є вказаний URL-шлях активним у даний момент.
+ * Використовується для динамічного призначення CSS-класу `.active`.
+ * * @function isActive
+ * @param {string} path - Шлях маршруту для перевірки (наприклад, '/exercises').
+ * @returns {boolean} True, якщо переданий шлях збігається з поточним шляхом у браузері.
+ */
 const isActive = (path) => route.path === path
 </script>
 

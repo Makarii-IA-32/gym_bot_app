@@ -1,22 +1,55 @@
 <script setup>
+/**
+ * @file Кореневий компонент застосунку (App.vue).
+ * Відповідає за первинне налаштування Telegram Mini App, розгортання вікна,
+ * автоматичну авторизацію (або реєстрацію) користувача на бекенді при старті 
+ * та відображення глобального макету (Layout) із нижньою навігацією.
+ */
+
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import WebApp from '@twa-dev/sdk'
 import BottomNav from './components/BottomNav.vue'
 
-const isAuth = ref(false) // Чи пройшли ми авторизацію
+/**
+ * Стан авторизації користувача.
+ * @type {import('vue').Ref<boolean>}
+ * @default false
+ */
+const isAuth = ref(false)
+
+/**
+ * Текстовий статус завантаження або помилки для відображення на Splash-screen.
+ * @type {import('vue').Ref<string>}
+ * @default 'Завантаження...'
+ */
 const status = ref('Завантаження...')
+
+/**
+ * Базовий префікс URL для запитів до API бекенду.
+ * @type {string}
+ */
 const backendUrl = '/api'
 
+/**
+ * Хук життєвого циклу компонента. Виконує ініціалізацію Telegram SDK,
+ * розгортає застосунок на повний екран та здійснює реєстрацію/вхід користувача.
+ * * @async
+ * @function onMounted
+ * @returns {Promise<void>}
+ */
 onMounted(async () => {
+  // Сповіщаємо Telegram, що додаток готовий до відображення
   WebApp.ready()
-  WebApp.expand() // Розгорнути на весь екран одразу
+  // Розгортаємо Mini App на всю доступну висоту екрана смартфона
+  WebApp.expand() 
 
+  // Отримуємо дані користувача з безпечного контексту ініціалізації Telegram
   const tgUser = WebApp.initDataUnsafe?.user
 
   if (tgUser) {
     try {
-      // Тиха реєстрація/вхід
+      // Виконуємо  реєстрацію або авторизацію на бекенді
       await axios.post(`${backendUrl}/users/`, {
         tg_id: tgUser.id,
         username: tgUser.username || "unknown",
@@ -28,7 +61,7 @@ onMounted(async () => {
       console.error(error)
     }
   } else {
-    // Режим розробки в браузері
+    // Режим розробки: якщо застосунок відкрито у звичайному браузері поза Telegram
     isAuth.value = true 
   }
 })

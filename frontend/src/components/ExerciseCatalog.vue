@@ -1,14 +1,46 @@
 <script setup>
+/**
+ * @file Компонент каталогу вправ (ExerciseCatalog.vue).
+ * Призначений для горизонтального скролінгу груп м'язів (чіпів)
+ * та відображення відповідного списку базових глобальних вправ.
+ */
+
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
-// Дані
+/**
+ * Список усіх груп м'язів, завантажених із бекенду.
+ * @type {import('vue').Ref<Array<{id: number, name: string}>>}
+ */
 const muscles = ref([])
+
+/**
+ * Список вправ, відфільтрованих за поточною групою м'язів.
+ * @type {import('vue').Ref<Array<{id: number, name: string, description: string, is_global: boolean}>>}
+ */
 const exercises = ref([])
-const activeMuscleId = ref(null) // Який м'яз зараз вибрано
+
+/**
+ * Ідентифікатор поточної активної групи м'язів для підсвічування чіпа.
+ * @type {import('vue').Ref<number|null>}
+ * @default null
+ */
+const activeMuscleId = ref(null)
+
+/**
+ * Індикатор стану завантаження даних (анімація або текст "Завантаження...").
+ * @type {import('vue').Ref<boolean>}
+ * @default false
+ */
 const isLoading = ref(false)
 
-// Функція завантаження м'язів
+/**
+ * Завантажує список доступних груп м'язів з API бекенду.
+ * Після успішного завантаження автоматично вибирає перший елемент для відображення вправ.
+ * * @async
+ * @function fetchMuscles
+ * @returns {Promise<void>}
+ */
 const fetchMuscles = async () => {
   try {
     const res = await axios.get('/api/exercises/muscles')
@@ -23,7 +55,13 @@ const fetchMuscles = async () => {
   }
 }
 
-// Функція вибору м'яза (фільтрація)
+/**
+ * Встановлює активну групу м'язів та надсилає запит на бекенд для отримання відповідних вправ.
+ * * @async
+ * @function selectMuscle
+ * @param {number} id - Унікальний ідентифікатор групи м'язів (Muscle ID) для фільтрації.
+ * @returns {Promise<void>}
+ */
 const selectMuscle = async (id) => {
   activeMuscleId.value = id
   isLoading.value = true
@@ -40,7 +78,9 @@ const selectMuscle = async (id) => {
   }
 }
 
-// Запускаємо при старті
+/**
+ * Хук життєвого циклу. Ініціює первинне завантаження структури груп м'язів при монтуванні компонента.
+ */
 onMounted(() => {
   fetchMuscles()
 })
